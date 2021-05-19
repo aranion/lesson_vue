@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <Calculate msg="Welcome to Your Vue.js App"/>
+    <Calculate msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 
 <script>
-import Calculate from './components/Calculate.vue'
+import Calculate from "./components/Calculate.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Calculate
-  }
-}
+    Calculate,
+  },
+};
 </script>
 
 <style lang="scss">
