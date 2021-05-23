@@ -27,7 +27,7 @@
       </section>
       <section :class="[$style.section]">
         <AnaliticBloc :items="paymentsList" :categories="categories" />
-      </section>
+      </section> 
     </main>
   </div>
 </template>
