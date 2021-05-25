@@ -22,16 +22,18 @@
 </template>
  
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   // props: ["items"],
   props: {
     // items: Array,
-    items: {
-      type: Array,
-      default: () => [],
-    },
-    targetPage: { type: Number, default: 1 },
-    itemsOnPage: { type: Number, default: 6 },
+    // items: {
+    //   type: Array,
+    //   default: () => [],
+    // },
+    // targetPage: { type: Number, default: 1 },
+    // itemsOnPage: { type: Number, default: 6 },
   },
   data() {
     return {
@@ -40,14 +42,16 @@ export default {
   },
   methods: {},
   computed: {
+    ...mapGetters(['getPaymentsList','getTargetPage', 'getItemsOnPage']),
     calcItemsPages() {
-      return this.items.slice(
-        this.itemsOnPage * (this.targetPage - 1),
-        this.itemsOnPage * (this.targetPage - 1) + this.itemsOnPage
+      return this.getPaymentsList.slice(
+        this.getItemsOnPage * (this.getTargetPage - 1),
+        this.getItemsOnPage * (this.getTargetPage - 1) + this.getItemsOnPage
       );
     },
   },
-  mounted() {},
+  mounted() {
+  },
 };
 </script>
 
@@ -55,6 +59,7 @@ export default {
 .paymetntsList {
   margin-top: 10px;
   width: 100%;
+  min-height: 555px;
   font-family: Arial, Helvetica, sans-serif;
 }
 .titleRow {

@@ -4,7 +4,7 @@
     <span
       :class="[$style.numberPage]"
       @click="onPageTarget($event)"
-      v-for="(item, index) in maxPages"
+      v-for="(item, index) in getMaxPage || 1"
       :key="index"
       :ref="item"
       >{{ item }}</span
@@ -14,37 +14,40 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   props: {
-    lengthList: Number,
-    itemsOnPage: Number,
-    maxPages: Number,
+    // lengthList: Number,
+    // itemsOnPage: Number,
+    // maxPages: Number,
   },
   data() {
     return {
-      targetPage: 1,
+      // targetPage: 1,
     };
   },
   methods: {
+    ...mapMutations(["setTargetPage"]),
+
     onPageTarget(event) {
+      let page = this.getTargetPage;
+
       switch (event.target.innerText) {
         case "<":
-          if (this.targetPage !== 1) {
-            --this.targetPage;
-          }
+          if (page !== 1) --page;
           break;
         case ">":
-          if (this.targetPage !== this.maxPages) {
-            ++this.targetPage;
-          }
+          if (page !== this.getMaxPage) ++page;
           break;
         default:
-          this.targetPage = +event.target.innerText;
+          page = +event.target.innerText;
           break;
       }
-      this.$emit("getNumberTargetPage", {
-        targetPage: this.targetPage,
-      });
+      this.setTargetPage(page);
+      // this.$emit("getNumberTargetPage", {
+      //   targetPage: this.targetPage,
+      // });
       this.toggleStyleActivPage();
     },
     toggleStyleActivPage() {
@@ -52,16 +55,20 @@ export default {
 
       for (let i = 1; i < elems.length; i++) {
         elems[i].classList.remove(this.$style.targetPage);
-        if (+elems[i].innerText === this.targetPage) {
+        if (+elems[i].innerText === this.getTargetPage) {
           elems[i].classList.add(this.$style.targetPage);
         }
       }
     },
   },
-  computed: {},
-  mounted() {
-    this.toggleStyleActivPage();
+  computed: {
+    ...mapGetters(["getMaxPage", "getTargetPage"]),
   },
+  mounted() {
+  },
+  updated() {
+    this.toggleStyleActivPage();
+  }
 };
 </script >
 

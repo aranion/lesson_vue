@@ -2,17 +2,23 @@
   <div :class="$style.rightBloc">
     <h2>Costs by categories</h2>
     <div></div>
-    <div :class="$style.categories">
-      <div v-for="(item, index) in categories" :key="index"><span :data-color='colorCategories[index]'>{{colorCategories[index]}}</span>{{ item }}</div>
+    <div :class="$style.getCategories">
+      <div v-for="(item, index) in getCategories" :key="index">
+        <span :data-color="colorCategories[index]">/{{
+          colorCategories[index]
+        }}/ </span
+        >{{ item }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
-    items: Array,
-    categories: Array,
+    // categories: Array,
   },
   data() {
     return {
@@ -26,9 +32,11 @@ export default {
       ],
     };
   },
-  methods: {},
-  mounted() {
+  computed: {
+    ...mapGetters(["getCategories"]),
   },
+  methods: {},
+  mounted() {},
 };
 </script>
 
@@ -38,6 +46,5 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
 }
 .categories {
-
 }
 </style>

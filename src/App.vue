@@ -8,26 +8,13 @@
         <button @click="togglePaymentForm" :class="[$style.togglePaymentForm]">
           ADD NEW COST+
         </button>
-        <PaymentForm
-          @add="onDataAdded"
-          v-show="isPaymentForm"
-          :categories="categories"
-        />
-        <PaymentsList
-          :items="paymentsList"
-          :targetPage="targetPage"
-          :itemsOnPage="itemsOnPage"
-        />
-        <PaginationPayments
-          @getNumberTargetPage="setNumberTargetPage"
-          :lengthList="paymentsList.length"
-          :itemsOnPage="itemsOnPage"
-          :maxPages="maxPages"
-        />
+        <PaymentForm v-show="isPaymentForm" />
+        <PaymentsList />
+        <PaginationPayments />
       </section>
       <section :class="[$style.section]">
-        <AnaliticBloc :items="paymentsList" :categories="categories" />
-      </section> 
+        <AnaliticBloc />
+      </section>
     </main>
   </div>
 </template>
@@ -36,6 +23,7 @@ import PaymentsList from "./components/PaymentsList";
 import PaymentForm from "./components/PaymentForm";
 import PaginationPayments from "./components/PaginationPayments";
 import AnaliticBloc from "./components/AnaliticBloc";
+import { mapActions } from "vuex";
 
 export default {
   name: "App",
@@ -108,32 +96,22 @@ export default {
         { id: 54, date: "13.05.2021", category: "Other", price: 550 },
         { id: 55, date: "13.05.2021", category: "Other", price: 560 },
       ],
-      categories: [
-        "Transport",
-        "Food",
-        "Housing",
-        "Healthecare",
-        "Clothing",
-        "Other",
-      ],
     };
   },
   methods: {
-    onDataAdded(data) {
-      this.paymentsList.push({
-        id: this.paymentsList[this.paymentsList.length - 1].id + 1,
-        ...data,
-      });
-      this.maxPages = this.caclMaxPage();
-    },
+    ...mapActions(["fetchData", "fetchCategories"]),
+    // onDataAdded(data) {
+    //   this.paymentsList.push({
+    //     id: this.paymentsList[this.paymentsList.length - 1].id + 1,
+    //     ...data,
+    //   });
+    //   this.maxPages = this.caclMaxPage();
+    // },
     togglePaymentForm() {
       this.isPaymentForm = !this.isPaymentForm;
     },
     setNumberTargetPage(page) {
       this.targetPage = page.targetPage;
-    },
-    caclMaxPage() {
-      return Math.ceil(this.paymentsList.length / this.itemsOnPage);
     },
   },
   computed: {},
@@ -148,7 +126,9 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    this.maxPages = this.caclMaxPage();
+    // this.maxPages = this.caclMaxPage();
+    this.fetchData();
+    this.fetchCategories();
   },
   deforeUpdate() {
     console.log("deforeUpdate");

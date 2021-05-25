@@ -6,7 +6,7 @@
       v-model="category"
     /> -->
     <select :class="[$style.input]" v-model="category">
-      <option v-for="(item, index) in categories" :key="index" :value="item">
+      <option v-for="(item, index) in getCategories" :key="index" :value="item">
         {{ item }}
       </option>
     </select>
@@ -29,9 +29,11 @@
 </template>
 
 <script>
+import { mapMutations, mapGetters } from "vuex";
+
 export default {
   props: {
-    categories: Array,
+    // categories: Array,
   },
   data() {
     return {
@@ -40,14 +42,29 @@ export default {
       price: "0",
     };
   },
+  computed: {
+    ...mapGetters(["getCategories", "getMaxPage"]),
+  },
   methods: {
+    ...mapMutations(["setPaymentListAdded", "setTargetPage"]),
     add() {
       const { date, category, price } = this;
-      this.$emit("add", { date, category, price });
+      // this.$emit("add", { date, category, price });
+      this.setPaymentListAdded({ date, category, price });
+      this.setTargetPage(this.getMaxPage);
     },
   },
-  computed: {},
-  mounted() {},
+  mounted() {
+    // console.log(this.getPaymentsList);
+    // console.log(this.getCategories);
+    // this.$store.commit("setPaymentsListData", ["s", "s"]);
+    // console.log("paymentsList=", this.$store.state.paymentsList);
+    // this.setPaymentsListData(["r", "r"]);
+    // console.log("paymentsList==", this.$store.state.paymentsList);
+    // this.setPaymentsListData(this.fetchData()); // this.$store.commit("setPaymentsListData", this.fetchData());
+    // console.log(this.getPaymentsListFullPrice);
+    // console.log(this.$store.getters.getPaymentsListFullPrice);
+  },
 };
 </script>
 
