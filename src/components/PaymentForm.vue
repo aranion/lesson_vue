@@ -76,6 +76,12 @@ $buttonColor: rgb(19, 201, 153);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  position: absolute;
+  background-color: #fff;
+  padding: 10px;
+    -webkit-box-shadow: 0px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 4px 8px 0px rgba(116, 117, 118, 0.2);
 }
 .input {
   width: 100%;

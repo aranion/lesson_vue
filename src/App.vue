@@ -153,6 +153,7 @@ $buttonColor: rgb(19, 201, 153);
 }
 .section {
   width: 50%;
+  position: relative;
 }
 .header {
   font-family: Arial, Helvetica, sans-serif;
