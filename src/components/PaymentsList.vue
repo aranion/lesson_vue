@@ -42,7 +42,7 @@ export default {
   },
   methods: {},
   computed: {
-    ...mapGetters(['getPaymentsList','getTargetPage', 'getItemsOnPage']),
+    ...mapGetters(["getPaymentsList", "getTargetPage", "getItemsOnPage"]),
     calcItemsPages() {
       return this.getPaymentsList.slice(
         this.getItemsOnPage * (this.getTargetPage - 1),
@@ -50,8 +50,7 @@ export default {
       );
     },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 

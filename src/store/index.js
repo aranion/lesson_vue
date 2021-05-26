@@ -29,6 +29,9 @@ export default new Vuex.Store({
     setCategories(state, data) {
       state.categories = data;
     },
+    setCategoriesAdded(state, data) {
+      state.categories.push(data);
+    },
   },
   getters: {
     // ответ данные
@@ -38,15 +41,15 @@ export default new Vuex.Store({
     getItemsOnPage: (state) => state.itemsOnPage,
     getMaxPage: (state) =>
       Math.ceil(state.paymentsList.length / state.itemsOnPage),
-
-    // getPaymentsListFullPrice: (state) => {
-    //   return state.paymentsList.reduce((res, el) => res + el.price, 0);
-    // },
+    getPaymentsListFullPrice: (state) => {
+      return state.paymentsList.reduce((res, el) => res + el.price, 0);
+    },
   },
   actions: {
     // запросы данных и изменение через мутации
-    fetchData({ commit }) {
+    fetchData({ commit }, numberPage) {
       return new Promise((resolve) => {
+        console.log(numberPage);
         setTimeout(
           resolve([
             { id: 1, date: "13.05.2021", category: "Transport", price: 20 },

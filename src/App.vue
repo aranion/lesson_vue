@@ -127,7 +127,7 @@ export default {
   mounted() {
     console.log("mounted");
     // this.maxPages = this.caclMaxPage();
-    this.fetchData();
+    this.fetchData(2);
     this.fetchCategories();
   },
   deforeUpdate() {
@@ -163,6 +163,7 @@ $buttonColor: rgb(19, 201, 153);
   background-color: $buttonColor;
   border: none;
   cursor: pointer;
+  min-width: 320px;
   padding: 10px 60px;
   border-radius: 3px;
   color: #fff;

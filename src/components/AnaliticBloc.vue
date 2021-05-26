@@ -1,14 +1,17 @@
 <template>
   <div :class="$style.rightBloc">
-    <h2>Costs by categories</h2>
+    <h2 @click="sumPriceCategories">Costs by categories</h2>
     <div></div>
     <div :class="$style.getCategories">
       <div v-for="(item, index) in getCategories" :key="index">
-        <span :data-color="colorCategories[index]">/{{
-          colorCategories[index]
-        }}/ </span
+        <span :data-color="colorCategories[index]" :style="(color = 'red')"
+          >/{{ colorCategories[index] }}/ </span
         >{{ item }}
       </div>
+      <div v-for="(it, index) in sumPriceCategories" :key="index">
+        {{ Math.round((it / getPaymentsListFullPrice) * 100) + "%" }}
+      </div>
+      <span>{{ "Full sumPrice = " + getPaymentsListFullPrice }}</span>
     </div>
   </div>
 </template>
@@ -33,7 +36,25 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getCategories"]),
+    ...mapGetters([
+      "getCategories",
+      "getPaymentsList",
+      "getPaymentsListFullPrice",
+    ]),
+    sumPriceCategories() {
+      const objGroupPrice = {};
+      this.getCategories.forEach((el) => {
+        let sumPrice = 0;
+        this.getPaymentsList.forEach((item) => {
+          if (el === item.category) {
+            sumPrice = sumPrice + item.price;
+          }
+        });
+        objGroupPrice[el] = sumPrice;
+      });
+      console.log(objGroupPrice);
+      return objGroupPrice;
+    },
   },
   methods: {},
   mounted() {},
