@@ -11,7 +11,7 @@
       <div v-for="(it, index) in sumPriceCategories" :key="index">
         {{ Math.round((it / getPaymentsListFullPrice) * 100) + "%" }}
       </div>
-      <span>{{ "Full sumPrice = " + getPaymentsListFullPrice }}</span>
+      <span>{{ "Total price = " + getPaymentsListFullPrice + " p."}}</span>
     </div>
   </div>
 </template>

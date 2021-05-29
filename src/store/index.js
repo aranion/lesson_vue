@@ -20,8 +20,6 @@ export default new Vuex.Store({
       const idNext = items.length <= 0 ? 1 : items[items.length - 1].id + 1;
 
       items.push({ id: idNext, ...data });
-
-      // this.maxPages = this.caclMaxPage();
     },
     setTargetPage(state, data) {
       state.targetPage = data;
