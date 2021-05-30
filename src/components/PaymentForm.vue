@@ -64,13 +64,13 @@ import { mapMutations, mapGetters } from "vuex";
 
 export default {
   props: {
-    // categories: Array,
+    setIsPaymentForm: Function,
   },
   data() {
     return {
-      date: "2021-05-30",
+      date: "2021-5-3",
       category: "Other",
-      price: "0",
+      price: 0,
       newCategory: "",
       isAddCategory: false,
     };
@@ -87,19 +87,73 @@ export default {
     add() {
       const { date, category, price } = this;
       // this.$emit("add", { date, category, price });
-      this.setPaymentListAdded({ date, category, price });
-      this.setTargetPage(this.getMaxPage);
+      if (category) {
+        this.setPaymentListAdded({ date, category, price });
+        this.setTargetPage(this.getMaxPage);
+      } else {
+        alert("Заполните поле 'Category'.");
+      }
     },
     addCategory() {
-      if (this.newCategory) {
+      if (this.checkDubleCategory(this.newCategory)) {
         this.setCategoriesAdded(this.newCategory);
         this.isAddCategory = !this.isAddCategory;
+        this.newCategory = "";
+      }
+    },
+    checkDubleCategory(value) {
+      const arr = this.getCategories;
+
+      if (value) {
+        if (isNaN(+value)) {
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i].toLowerCase() === value.toLowerCase()) {
+              alert("Категория уже создана!");
+              return false;
+            }
+          }
+          return true;
+        } else {
+          alert("Введите текст!");
+          return false;
+        }
       } else {
         alert("Заполните поле 'New category'.");
+        return false;
+      }
+    },
+    getNowDateFormat() {
+      const date = new Date();
+      const day = date.getDate().toString();
+      const month = date.getMonth().toString();
+      const year = date.getFullYear();
+
+      return `${year}-${month.length === 1 ? "0" + (+month + 1) : +month + 1}-${
+        day.length === 1 ? "0" + day : day
+      }`;
+    },
+    addDataFromUrl() {
+      const routArrUrl = this.$route.path.split("/");
+      const category = routArrUrl[routArrUrl.length - 1];
+      const price = this.$route.query.price;
+
+      this.date = this.getNowDateFormat();
+      this.category =
+        category && routArrUrl[2] === "add" ? category : this.category;
+      this.price = +price || +this.price;
+
+      if (category && price) {
+        this.add();
+      } else if (routArrUrl.length > 2) {
+        this.setIsPaymentForm(true);
       }
     },
   },
   mounted() {
+    this.date = this.getNowDateFormat();
+
+    // this.price = +this.$route.params.price;
+    // const date = new Date;
     // console.log(this.getPaymentsList);
     // console.log(this.getCategories);
     // this.$store.commit("setPaymentsListData", ["s", "s"]);
@@ -109,6 +163,9 @@ export default {
     // this.setPaymentsListData(this.fetchData()); // this.$store.commit("setPaymentsListData", this.fetchData());
     // console.log(this.getPaymentsListFullPrice);
     // console.log(this.$store.getters.getPaymentsListFullPrice);
+  },
+  updated() {
+    this.addDataFromUrl();
   },
 };
 </script>
@@ -122,7 +179,7 @@ $buttonColor: rgb(19, 201, 153);
 }
 
 .formAdd {
-  width: 300px;
+  width: 320px;
   min-height: 195px;
   display: flex;
   flex-direction: column;
@@ -131,6 +188,8 @@ $buttonColor: rgb(19, 201, 153);
   background-color: #fff;
   padding: 10px;
   font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid $buttonColor;
+  box-sizing: border-box;
   @include shadow();
 }
 .input {

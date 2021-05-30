@@ -68,6 +68,7 @@ export default {
   },
   updated() {
     this.toggleStyleActivPage();
+    // console.log(this.$route.params.page);
   }
 };
 </script >
