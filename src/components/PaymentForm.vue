@@ -1,11 +1,6 @@
 <template>
   <div :class="[$style.formAdd]">
-    <!-- <input
-      :class="[$style.input]"
-      placeholder="Payment description"
-      v-model="category"
-    /> -->
-    <div v-show="isAddCategory" :class="[$style.newCategory]">
+    <div v-if="isAddCategory" :class="[$style.newCategory]">
       <span>New category:</span>
       <input
         :class="[$style.input, $style.inputAddCategiry]"
@@ -14,7 +9,7 @@
       />
     </div>
 
-    <div v-show="!isAddCategory">
+    <div v-if="!isAddCategory">
       <select :class="[$style.input]" v-model="category">
         <option
           v-for="(item, index) in getCategories"
@@ -39,14 +34,22 @@
     </div>
 
     <div :class="[$style.formBottomButton]">
-      <button
-        :class="[$style.addCategory]"
-        @click="isAddCategory = !isAddCategory"
-      >
+      <button :class="[$style.addCategory]" @click="toggleAddCategoryButton">
         {{ !isAddCategory ? "Add category" : "Back" }}
       </button>
-      <button :class="[$style.button]" @click="add" v-show="!isAddCategory">
+      <button
+        :class="[$style.button]"
+        @click="add"
+        v-show="!isAddCategory && !isSaveButton"
+      >
         ADD <span :class="[$style.spanAdd]">+</span>
+      </button>
+      <button
+        :class="[$style.button]"
+        @click="updatePaymetnList"
+        v-show="isSaveButton"
+      >
+        SAVE
       </button>
       <button
         :class="[$style.button]"
@@ -73,16 +76,19 @@ export default {
       price: 0,
       newCategory: "",
       isAddCategory: false,
+      isSaveButton: false,
+      targetId: -1,
     };
   },
   computed: {
-    ...mapGetters(["getCategories", "getMaxPage"]),
+    ...mapGetters(["getCategories", "getMaxPage", "getPaymentsList"]),
   },
   methods: {
     ...mapMutations([
       "setPaymentListAdded",
       "setTargetPage",
       "setCategoriesAdded",
+      "setPaymentListUpdate",
     ]),
     add() {
       const { date, category, price } = this;
@@ -97,7 +103,8 @@ export default {
     addCategory() {
       if (this.checkDubleCategory(this.newCategory)) {
         this.setCategoriesAdded(this.newCategory);
-        this.isAddCategory = !this.isAddCategory;
+        this.toggleAddCategoryButton();
+        this.toggleSaveButton(false);
         this.newCategory = "";
       }
     },
@@ -148,14 +155,55 @@ export default {
         this.setIsPaymentForm(true);
       }
     },
+    openEditPaymentListForm(targetId) {
+      this.setIsPaymentForm(true);
+
+      const { date, category, price } = this.getPaymentsList.find(
+        (el) => el.id === targetId
+      );
+
+      this.price = price;
+      this.date = date;
+      this.category = category;
+      this.targetId = targetId;
+
+      this.toggleSaveButton(true);
+      this.toggleAddCategoryButton(false);
+    },
+    toggleSaveButton(value) {
+      if (!value) {
+        this.isSaveButton = value;
+      } else {
+        this.isSaveButton = !this.isSaveButton;
+      }
+    },
+    toggleAddCategoryButton(value) {
+      if (!value) {
+        this.isAddCategory = value;
+      } else {
+        this.isAddCategory = !this.isAddCategory;
+        this.toggleSaveButton(false);
+      }
+    },
+    updatePaymetnList() {
+      this.setPaymentListUpdate({
+        id: this.targetId,
+        date: this.date,
+        category: this.category,
+        price: this.price,
+      });
+      this.toggleSaveButton();
+      this.setIsPaymentForm(false);
+    },
   },
   mounted() {
     this.date = this.getNowDateFormat();
+    this.addDataFromUrl();
 
+    this.$root.$on("editPaymentForm", this.openEditPaymentListForm);
+
+    // this.$root.$on('isPayment', this.editPaymentList);
     // this.price = +this.$route.params.price;
-    // const date = new Date;
-    // console.log(this.getPaymentsList);
-    // console.log(this.getCategories);
     // this.$store.commit("setPaymentsListData", ["s", "s"]);
     // console.log("paymentsList=", this.$store.state.paymentsList);
     // this.setPaymentsListData(["r", "r"]);
@@ -165,7 +213,7 @@ export default {
     // console.log(this.$store.getters.getPaymentsListFullPrice);
   },
   updated() {
-    this.addDataFromUrl();
+    // this.addDataFromUrl();
   },
 };
 </script>

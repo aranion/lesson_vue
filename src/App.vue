@@ -47,17 +47,25 @@ export default {
   },
   methods: {
     checkActivePage(name) {
-      name = name.toLowerCase();
-      let urlName = "";
-      if (
-        this.$router.history.current.path === "/" ||
-        this.$router.history.current.path === "/404"
-      ) {
-        urlName = this.$router.history.current.name.toLowerCase();
-      } else {
-        urlName = this.$router.history.current.path.split("/")[1].toLowerCase();
+      if (name !== null) {
+        name = name.toLowerCase();
+        let urlName = "";
+        if (
+          this.$router.history.current.path === "/" ||
+          this.$router.history.current.path === "/404"
+        ) {
+          if (this.$router.history.current.name !== null) {
+            urlName = this.$router.history.current.name.toLowerCase();
+          } else {
+            urlName = this.$router.history.pending.name.toLowerCase();
+          }
+        } else {
+          urlName = this.$router.history.current.path
+            .split("/")[1]
+            .toLowerCase();
+        }
+        return name === urlName || (name === "dashboard" && urlName === "main");
       }
-      return name === urlName || (name === "dashboard" && urlName === "main");
     },
   },
   computed: {},

@@ -10,12 +10,16 @@
       </div>
     </div>
     <div
-      :class="[$style.titleRow]"
+      :class="[$style.titleRow, $style.titleRowSelect]"
       v-for="(item, index) in calcItemsPages"
       :key="index"
     >
       <div :class="[$style.textRow]" v-for="(content, i) in item" :key="i">
         {{ content }}
+      </div>
+
+      <div :class="$style.contextMenu" @click.stop="onMenu($event)">
+        <ContextMenu :idRow="item.id" />
       </div>
     </div>
   </div>
@@ -23,8 +27,12 @@
  
 <script>
 import { mapGetters } from "vuex";
+// import ContextMenu from "./ContextMenu/ContextMenu";
 
 export default {
+  components: {
+    ContextMenu: () => import("./ContextMenu/ContextMenu"),
+  },
   // props: ["items"],
   props: {
     // items: Array,
@@ -40,7 +48,11 @@ export default {
       titleHeader: ["#", "Date", "Category", "value"],
     };
   },
-  methods: {},
+  methods: {
+    onMenu(event) {
+      this.$menu.show(event);
+    },
+  },
   computed: {
     ...mapGetters(["getPaymentsList", "getTargetPage", "getItemsOnPage"]),
     calcItemsPages() {
@@ -63,9 +75,13 @@ export default {
 }
 .titleRow {
   display: flex;
+  align-items: center;
   min-width: 100%;
   text-align: center;
   padding: 15px 0;
+}
+.titleRowSelect:hover {
+  background-color: rgba(137, 255, 198, 0.3);
 }
 .titleRow:not(:last-child) {
   border-bottom: 2px solid rgb(214, 214, 214);
@@ -73,12 +89,12 @@ export default {
 .titleHeader {
   font-weight: bold;
 }
-.textRow {
+.textRow:hover {
 }
 .textRow:first-child {
   width: 10%;
 }
-.textRow:last-child {
+.textRow:nth-child(4) {
   width: 20%;
 }
 .textRow:nth-child(2) {
@@ -86,5 +102,15 @@ export default {
 }
 .textRow:nth-child(3) {
   width: 35%;
+}
+.contextMenu {
+  position: absolute;
+  right: 0;
+  cursor: pointer;
+}
+.contextMenu:after {
+  content: "\2807";
+  color: rgb(84, 84, 84);
+  font-size: 18px;
 }
 </style>

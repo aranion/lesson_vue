@@ -38,7 +38,7 @@
 
       <span>{{ "Total price = " + getPaymentsListFullPrice + " p." }}</span>
     </div>
-    <div :class="$style.testLinks" ref="links">
+    <!-- <div :class="$style.testLinks" ref="links">
       <h4>Test links auto add in form :</h4>
       <p>теги 'a' с перезагрузкой страницы</p>
       <a
@@ -81,7 +81,7 @@
           /dashboard/add/payment/</router-link
         >
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -92,8 +92,14 @@ export default {
   props: {},
   data() {
     return {
-      colorCategories: [],
-      categories: [],
+      colorCategories: [
+        "#703ddb",
+        "#936a01",
+        "#87c83a",
+        "#c05650",
+        "#10492f",
+        "#b92495",
+      ],
     };
   },
   computed: {
@@ -118,8 +124,14 @@ export default {
   },
   methods: {
     addColorCategories() {
-      for (let i = 0; i < this.getCategories.length; i++) {
-        this.colorCategories.push(this.randomColor());
+      if (this.colorCategories.length < this.getCategories.length) {
+        for (
+          let i = 0;
+          i < this.getCategories.length - this.colorCategories.length;
+          i++
+        ) {
+          this.colorCategories.push(this.randomColor());
+        }
       }
     },
     random(max, min) {
@@ -142,7 +154,6 @@ export default {
     },
   },
   mounted() {
-    this.addColorCategories();
     // this.$refs.links.querySelectorAll("a").forEach((link) => {
     //   link.addEventListener("click", (event) => {
     //     event.preventDefault();
@@ -150,7 +161,9 @@ export default {
     //   });
     // });
   },
-  updated() {},
+  updated() {
+    this.addColorCategories();
+  },
 };
 </script>
 

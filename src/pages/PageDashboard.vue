@@ -4,10 +4,17 @@
       <button @click="togglePaymentForm" :class="[$style.togglePaymentForm]">
         ADD NEW COST+
       </button>
+      <transition name='fade'>
+        <Modal v-show="isPaymentForm" :setIsPaymentForm='setIsPaymentForm'/>
+      </transition>
+
+      <!-- <button @click="togglePaymentForm" :class="[$style.togglePaymentForm]">
+        ADD NEW COST+
+      </button>
       <PaymentForm
         v-show="isPaymentForm"
         :setIsPaymentForm="setIsPaymentForm"
-      />
+      /> -->
       <PaymentsList />
       <PaginationPayments />
     </section>
@@ -19,26 +26,30 @@
 
 <script>
 import PaymentsList from "../components/PaymentsList";
-import PaymentForm from "../components/PaymentForm";
+// import PaymentForm from "../components/PaymentForm";
 import PaginationPayments from "../components/PaginationPayments";
 import AnaliticBloc from "../components/AnaliticBloc";
 import { mapActions } from "vuex";
+// import Modal from "../components/modalwindow/Modal";
 
 export default {
   data() {
     return {
       isPaymentForm: false,
+      isShow: "",
     };
   },
   components: {
     PaymentsList,
-    PaymentForm,
+    // PaymentForm,
     PaginationPayments,
     AnaliticBloc,
+    Modal: () => import("../components/modalwindow/Modal"),
   },
   methods: {
     ...mapActions(["fetchData", "fetchCategories"]),
-    togglePaymentForm() {
+
+    togglePaymentForm() { 
       this.isPaymentForm = !this.isPaymentForm;
     },
     setNumberTargetPage(page) {
@@ -51,6 +62,8 @@ export default {
   mounted() {
     this.fetchData();
     this.fetchCategories();
+  },
+  beforeDestroy() {
   },
 };
 </script>
@@ -82,4 +95,12 @@ $buttonColor: rgb(19, 201, 153);
 .togglePaymentForm:hover {
   background-color: darken($buttonColor, 5%);
 }
+:global(.fade-enter-active), :global(.fade-leave-active) {
+  transition: opacity 0.5s;
+
+}
+:global(.fade-enter), :global(.fade-leave-to) {
+  opacity: 0;
+}
+
 </style>

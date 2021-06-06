@@ -1,11 +1,16 @@
 import Vue from "vue";
 import Router from "vue-router";
 
+
 import PageDashboard from "../pages/PageDashboard";
 import PageAbout from "../pages/PageAbout";
 import Page404 from "../pages/Page404";
+// const PageDashboard = "../pages/PageDashboard";
+// const PageAbout = "../pages/PageAbout";
+// const Page404 = "../pages/Page404";
 
 Vue.use(Router);
+
 const router = new Router({
   mode: "history",
   routes: [
@@ -13,26 +18,31 @@ const router = new Router({
       path: "/",
       name: "main",
       component: PageDashboard,
+      // component: () => import(PageDashboard),
     },
     {
       path: "/dashboard",
       name: "dashboard",
       component: PageDashboard,
+      // component: () => import(PageDashboard),
     },
     {
       path: "/dashboard/add/payment/*",
       name: "dashboardAddForm",
       component: PageDashboard,
+      // component: () => import(PageDashboard),
     },
     {
       path: "/about",
       name: "about",
       component: PageAbout,
+      // component: () => import(PageAbout),
     },
     {
       path: "/*",
       name: "NotFound",
       component: Page404,
+      // component: () => import(Page404),
     },
   ],
 });
