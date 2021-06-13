@@ -14,21 +14,16 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
-  props: {
-    // lengthList: Number,
-    // itemsOnPage: Number,
-    // maxPages: Number,
-  },
+  props: {},
   data() {
-    return {
-      // targetPage: 1,
-    };
+    return {};
   },
   methods: {
     ...mapMutations(["setTargetPage"]),
+    ...mapActions(["fetchData"]),
 
     onPageTarget(event) {
       let page = this.getTargetPage;
@@ -44,7 +39,9 @@ export default {
           page = +event.target.innerText;
           break;
       }
+
       this.setTargetPage(page);
+      this.fetchData(page);
       // this.$emit("getNumberTargetPage", {
       //   targetPage: this.targetPage,
       // });
@@ -65,11 +62,13 @@ export default {
     ...mapGetters(["getMaxPage", "getTargetPage"]),
   },
   mounted() {
+    this.fetchData(this.getTargetPage);
+    this.toggleStyleActivPage();
+    this.$root.$on('toogleActivePage', this.toggleStyleActivPage);  
   },
   updated() {
     this.toggleStyleActivPage();
-    // console.log(this.$route.params.page);
-  }
+  },
 };
 </script >
 

@@ -11,7 +11,7 @@
       </button>
       <button :class="$style.button" @click.prevent="onDelPayment">
         <img
-          src="https://cdn.icon-icons.com/icons2/1097/PNG/512/1485477104-basket_78591.png"
+          src="https://img2.freepng.ru/20190320/tst/kisspng-rubbish-bins-waste-paper-baskets-recycling-bin-c-trash-can-outline-svg-png-icon-free-download-168-5c927228806728.9268982715531013525259.jpg"
           alt="корзина"
           :class="$style.buttonImg"
         />
@@ -35,8 +35,13 @@ export default {
     idRow: Number,
   },
   methods: {
-    ...mapMutations(["setPaymentListDel", "setPaymentListUpdate"]),
-    
+    ...mapMutations([
+      "setPaymentListDel",
+      "setPaymentListUpdate",
+      "setFullPriceUpdate",
+
+    ]),
+
     onToggleShow({ event }) {
       if (this.isToggleShow) {
         this.targetId = +event.target.parentNode.children[0].innerText;
@@ -49,16 +54,22 @@ export default {
       this.$root.$emit("editPaymentForm", this.targetId);
     },
     onDelPayment() {
+      const targetId = this.targetId;
+      const price = this.getPaymentsListActive.find((el) => el.id === targetId)
+        .price;
+
       this.setPaymentListDel(this.targetId);
+      this.setFullPriceUpdate(-price);
+
+    
     },
   },
   computed: {
-    ...mapGetters(["getPaymentsList"]),
+    ...mapGetters(["getPaymentsListActive"]),
   },
   mounted() {
     this.$menu.EventBus.$on("onToggleShow", this.onToggleShow);
   },
-  beforeDestroy() {},
 };
 </script>
 

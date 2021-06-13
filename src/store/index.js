@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import localStorageAll from "../emulationServer";
 
 Vue.use(Vuex);
 
@@ -7,27 +8,79 @@ export default new Vuex.Store({
   state: {
     itemsOnPage: 10,
     targetPage: 1,
-    paymentsList: [],
+    paymentsList: {},
+    paymentsListActive: [],
+    paymentsListId: [],
     categories: [],
+    maxPages: 1,
+    fullPrice: 0,
+    analyticData: {},
   },
   mutations: {
     //изменяет данные
     setPaymentsListData(state, payload) {
-      state.paymentsList = payload;
+      if (state.paymentsList[`page${state.targetPage}`] === undefined) {
+        state.paymentsList[`page${state.targetPage}`] = [];
+      }
+
+      state.paymentsList[`page${state.targetPage}`] = [...payload];
+      state.paymentsListActive = state.paymentsList[`page${state.targetPage}`];
     },
     setPaymentListAdded(state, data) {
-      const items = state.paymentsList;
-      const idNext = items.length <= 0 ? 1 : items[items.length - 1].id + 1;
+                                       localStorageAll.addPaymentList(data);
 
-      items.push({ id: idNext, ...data });
-    },
-    setPaymentListDel(state, payload) {
-      state.paymentsList = state.paymentsList.filter((el) => {
-        return el.id !== payload;
-      });
+                                       const items = state.paymentsListActive;
+                                       const idNext =
+                                         items.length <= 0
+                                           ? 1
+                                           : items[items.length - 1].id + 1;
+                                       state.targetPage = state.maxPages;
+
+                                       // if (state.paymentsList[`page${state.targetPage}`] === undefined) {
+                                       //   state.paymentsList[`page${state.targetPage}`] = [];
+                                       // }
+
+                                       if (
+                                         state.paymentsList[
+                                           `page${state.targetPage}`
+                                         ].length >= state.itemsOnPage
+                                       ) {
+                                         state.maxPages = state.maxPages + 1;
+                                         state.paymentsList[
+                                           `page${state.maxPages}`
+                                         ] = [];
+                                         state.paymentsListActive =
+                                           state.paymentsList[
+                                             `page${state.maxPages}`
+                                           ];
+                                       }
+
+                                       state.paymentsListActive.push({
+                                         id: idNext,
+                                         ...data,
+                                       });
+                                     },
+    setPaymentListDel(state, id) {
+      localStorageAll.delPaymentItem(id);
+
+      state.paymentsListActive = state.paymentsListActive.filter(
+        (el) => el.id !== id
+      );
+      state.paymentsList[`page${state.targetPage}`] = state.paymentsListActive;
+      state.paymentsListId = state.paymentsListId.filter((el) => el.id !== id);
+
+      if (state.paymentsListActive.length === 0) {
+        state.maxPages--;
+        state.targetPage = state.maxPages;
+        state.paymentsListActive = [
+          ...state.paymentsList[`page${state.targetPage}`],
+        ];
+      }
     },
     setPaymentListUpdate(state, payload) {
-      state.paymentsList.forEach((el) => {
+      localStorageAll.updatePaymentList(payload);
+
+      state.paymentsListActive.forEach((el) => {
         if (el.id === payload.id) {
           el.date = payload.date;
           el.category = payload.category;
@@ -36,393 +89,77 @@ export default new Vuex.Store({
         }
       });
     },
+    setMaxPages(state, data) {
+      state.maxPages = data;
+    },
     setTargetPage(state, data) {
       state.targetPage = data;
     },
     setCategories(state, data) {
-      state.categories = data;
+      state.categories = [...data];
     },
-    setCategoriesAdded(state, data) {
+    setCategoriesUpdate(state, data) {
       state.categories.push(data);
+      localStorageAll.addCategory(data);
+    },
+    setFullPrice(state, data) {
+      state.fullPrice = data;
+    },
+    setFullPriceUpdate(state, data = 0) {
+      state.fullPrice = state.fullPrice + data;
+    },
+    setAnalyticData(state, data) {
+      state.analyticData = data;
     },
   },
   getters: {
     // отдает данные
     getPaymentsList: (state) => state.paymentsList,
+    getPaymentsListActive: (state) => state.paymentsListActive,
     getCategories: (state) => state.categories,
     getTargetPage: (state) => state.targetPage,
     getItemsOnPage: (state) => state.itemsOnPage,
-    getMaxPage: (state) =>
-      Math.ceil(state.paymentsList.length / state.itemsOnPage),
-    getPaymentsListFullPrice: (state) => {
-      return state.paymentsList.reduce((res, el) => res + el.price, 0);
-    },
+    getMaxPage: (state) => state.maxPages,
+    getPaymentsListFullPrice: (state) => state.fullPrice,
+    getAnalyticData: (state) => state.analyticData,
   },
   actions: {
     // запросы данных и изменение через мутации
-    fetchData({ commit, getters }) {
-      // тут проверка на пустой массив для предотвращения повторной загрузки данных в store
-      if (getters.getPaymentsList.length === 0) {
-        return new Promise((resolve) => {
-          setTimeout(
-            resolve([
-              {
-                id: 1,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 20,
-              },
-              {
-                id: 2,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 30,
-              },
-              {
-                id: 3,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 40,
-              },
-              {
-                id: 4,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 50,
-              },
-              {
-                id: 5,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 60,
-              },
-              {
-                id: 6,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 70,
-              },
-              {
-                id: 7,
-                date: "2021-06-06",
-                category: "Transport",
-                price: 80,
-              },
-              {
-                id: 8,
-                date: "2021-06-06",
-                category: "Food",
-                price: 90,
-              },
-              {
-                id: 9,
-                date: "2021-06-06",
-                category: "Food",
-                price: 100,
-              },
-              {
-                id: 10,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 110,
-              },
-              {
-                id: 11,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 120,
-              },
-              {
-                id: 12,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 130,
-              },
-              {
-                id: 13,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 140,
-              },
-              {
-                id: 14,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 150,
-              },
-              {
-                id: 15,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 160,
-              },
-              {
-                id: 16,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 170,
-              },
-              {
-                id: 17,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 180,
-              },
-              {
-                id: 18,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 190,
-              },
-              {
-                id: 19,
-                date: "2021-06-06",
-                category: "Housing",
-                price: 200,
-              },
-              {
-                id: 20,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 210,
-              },
-              {
-                id: 21,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 220,
-              },
-              {
-                id: 22,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 230,
-              },
-              {
-                id: 23,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 240,
-              },
-              {
-                id: 24,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 250,
-              },
-              {
-                id: 25,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 260,
-              },
-              {
-                id: 26,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 270,
-              },
-              {
-                id: 27,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 280,
-              },
-              {
-                id: 28,
-                date: "2021-06-06",
-                category: "Healthecare",
-                price: 290,
-              },
-              {
-                id: 29,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 300,
-              },
-              {
-                id: 30,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 310,
-              },
-              {
-                id: 31,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 320,
-              },
-              {
-                id: 32,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 330,
-              },
-              {
-                id: 33,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 340,
-              },
-              {
-                id: 34,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 350,
-              },
-              {
-                id: 35,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 360,
-              },
-              {
-                id: 36,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 370,
-              },
-              {
-                id: 37,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 380,
-              },
-              {
-                id: 38,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 390,
-              },
-              {
-                id: 39,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 400,
-              },
-              {
-                id: 40,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 410,
-              },
-              {
-                id: 41,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 420,
-              },
-              {
-                id: 42,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 430,
-              },
-              {
-                id: 43,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 440,
-              },
-              {
-                id: 44,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 450,
-              },
-              {
-                id: 45,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 460,
-              },
-              {
-                id: 46,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 470,
-              },
-              {
-                id: 47,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 480,
-              },
-              {
-                id: 48,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 490,
-              },
-              {
-                id: 49,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 500,
-              },
-              {
-                id: 50,
-                date: "2021-06-06",
-                category: "Clothing",
-                price: 510,
-              },
-              {
-                id: 51,
-                date: "2021-06-06",
-                category: "Other",
-                price: 520,
-              },
-              {
-                id: 52,
-                date: "2021-06-06",
-                category: "Other",
-                price: 530,
-              },
-              {
-                id: 53,
-                date: "2021-06-06",
-                category: "Other",
-                price: 540,
-              },
-              {
-                id: 54,
-                date: "2021-06-06",
-                category: "Other",
-                price: 550,
-              },
-              {
-                id: 55,
-                date: "2021-06-06",
-                category: "Other",
-                price: 560,
-              },
-            ]),
-            2000
-          );
-        }).then((res) => {
-          commit("setPaymentsListData", res);
-        });
-      }
+    fetchData({ commit }, page) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const itemsResolve = {
+            maxPages: localStorageAll.getMaxPage(this.state.itemsOnPage),
+            items: [
+              ...localStorageAll.getPages(this.state.itemsOnPage)[
+                `page${page}`
+              ],
+            ],
+            fullPrice: localStorageAll.getFullPrice(),
+          };
+          resolve(itemsResolve);
+        }, 1000);
+      }).then((res) => {
+        commit("setPaymentsListData", res.items);
+        commit("setMaxPages", res.maxPages);
+        commit("setFullPrice", res.fullPrice);
+      });
     },
-    fetchCategories({ commit, getters }) {
-      // тут проверка на пустой массив для предотвращения повторной загрузки данных в store
-      if (getters.getCategories.length === 0) {
-        return new Promise((resolve) => {
-          setTimeout(
-            resolve([
-              "Transport",
-              "Food",
-              "Housing",
-              "Healthecare",
-              "Clothing",
-              "Other",
-            ]),
-            2000
-          );
-        }).then((res) => {
-          commit("setCategories", res);
-        });
-      }
+    fetchCategories({ commit }) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(localStorageAll.categories);
+        }, 1000);
+      }).then((res) => {
+        commit("setCategories", res);
+      });
+    },
+    fetchAnalytic({ commit }) {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(localStorageAll.getAnalyticData()), 500);
+      }).then((res) => {
+        commit("setAnalyticData", res);
+      });
     },
   },
 });

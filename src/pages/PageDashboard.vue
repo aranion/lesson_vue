@@ -19,7 +19,7 @@
       <PaginationPayments />
     </section>
     <section :class="[$style.section]">
-      <AnaliticBloc />
+      <AnalyticBloc />
     </section>
   </div>
 </template>
@@ -28,8 +28,7 @@
 import PaymentsList from "../components/PaymentsList";
 // import PaymentForm from "../components/PaymentForm";
 import PaginationPayments from "../components/PaginationPayments";
-import AnaliticBloc from "../components/AnaliticBloc";
-import { mapActions } from "vuex";
+import AnalyticBloc from "../components/AnalyticBloc";
 // import Modal from "../components/modalwindow/Modal";
 
 export default {
@@ -43,27 +42,19 @@ export default {
     PaymentsList,
     // PaymentForm,
     PaginationPayments,
-    AnaliticBloc,
+    AnalyticBloc,
     Modal: () => import("../components/modalwindow/Modal"),
   },
   methods: {
-    ...mapActions(["fetchData", "fetchCategories"]),
-
     togglePaymentForm() { 
       this.isPaymentForm = !this.isPaymentForm;
-    },
-    setNumberTargetPage(page) {
-      this.targetPage = page.targetPage;
     },
     setIsPaymentForm(value) {
       this.isPaymentForm = value;
     },
   },
   mounted() {
-    this.fetchData();
-    this.fetchCategories();
-  },
-  beforeDestroy() {
+    
   },
 };
 </script>

@@ -33,7 +33,6 @@ export default {
   components: {
     ContextMenu: () => import("./ContextMenu/ContextMenu"),
   },
-  // props: ["items"],
   props: {
     // items: Array,
     // items: {
@@ -54,12 +53,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getPaymentsList", "getTargetPage", "getItemsOnPage"]),
+    ...mapGetters(["getPaymentsListActive"]),
+
     calcItemsPages() {
-      return this.getPaymentsList.slice(
-        this.getItemsOnPage * (this.getTargetPage - 1),
-        this.getItemsOnPage * (this.getTargetPage - 1) + this.getItemsOnPage
-      );
+      return this.getPaymentsListActive;
+      // return this.getPaymentsList.slice(
+      //   this.getItemsOnPage * (this.getTargetPage - 1),
+      //   this.getItemsOnPage * (this.getTargetPage - 1) + this.getItemsOnPage
+      // );
     },
   },
   mounted() {},

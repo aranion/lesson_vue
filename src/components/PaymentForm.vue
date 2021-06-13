@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
+import { mapMutations, mapGetters, mapActions } from "vuex";
 
 export default {
   props: {
@@ -81,30 +81,43 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getCategories", "getMaxPage", "getPaymentsList"]),
+    ...mapGetters(["getCategories", "getMaxPage", "getPaymentsListActive"]),
   },
   methods: {
     ...mapMutations([
       "setPaymentListAdded",
       "setTargetPage",
-      "setCategoriesAdded",
+      "setCategoriesUpdate",
       "setPaymentListUpdate",
+      "setFullPriceUpdate",
     ]),
+    ...mapActions(["fetchData", "fetchCategories", "fetchAnalytic"]),
+
     add() {
       const { date, category, price } = this;
-      // this.$emit("add", { date, category, price });
-      if (category) {
+      const maxPage = this.getMaxPage;
+
+      this.setTargetPage(maxPage);
+
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(this.fetchData(maxPage));
+        }, 100);
+      }).then(() => {
+        this.$root.$emit("toogleActivePage", maxPage);
         this.setPaymentListAdded({ date, category, price });
-        this.setTargetPage(this.getMaxPage);
-      } else {
-        alert("Заполните поле 'Category'.");
-      }
+        this.setFullPriceUpdate(price);
+        this.fetchAnalytic();
+      });
     },
     addCategory() {
       if (this.checkDubleCategory(this.newCategory)) {
-        this.setCategoriesAdded(this.newCategory);
+        this.setCategoriesUpdate(this.newCategory);
+        this.fetchAnalytic();
         this.toggleAddCategoryButton();
         this.toggleSaveButton(false);
+
+        this.category = this.newCategory;
         this.newCategory = "";
       }
     },
@@ -158,7 +171,7 @@ export default {
     openEditPaymentListForm(targetId) {
       this.setIsPaymentForm(true);
 
-      const { date, category, price } = this.getPaymentsList.find(
+      const { date, category, price } = this.getPaymentsListActive.find(
         (el) => el.id === targetId
       );
 
@@ -186,12 +199,19 @@ export default {
       }
     },
     updatePaymetnList() {
-      this.setPaymentListUpdate({
+      const priceOld = this.getPaymentsListActive.find(
+        (el) => el.id === this.targetId
+      ).price;
+      const objUpdate = {
         id: this.targetId,
         date: this.date,
         category: this.category,
         price: this.price,
-      });
+      };
+
+      this.setPaymentListUpdate(objUpdate);
+      this.setFullPriceUpdate(this.price - priceOld);
+      this.fetchAnalytic();
       this.toggleSaveButton();
       this.setIsPaymentForm(false);
     },
@@ -199,6 +219,7 @@ export default {
   mounted() {
     this.date = this.getNowDateFormat();
     this.addDataFromUrl();
+    this.fetchCategories();
 
     this.$root.$on("editPaymentForm", this.openEditPaymentListForm);
 
@@ -212,9 +233,7 @@ export default {
     // console.log(this.getPaymentsListFullPrice);
     // console.log(this.$store.getters.getPaymentsListFullPrice);
   },
-  updated() {
-    // this.addDataFromUrl();
-  },
+  updated() {},
 };
 </script>
 
