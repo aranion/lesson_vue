@@ -9,7 +9,7 @@
       />
     </div>
 
-    <div v-if="!isAddCategory">
+    <div v-if="!isAddCategory" :class="[$style.wrapperInput]">
       <select :class="[$style.input]" v-model="category">
         <option
           v-for="(item, index) in getCategories"
@@ -23,18 +23,20 @@
         :class="[$style.input]"
         placeholder="Payment amount"
         type="number"
+        name="amount"
         v-model.number="price"
       />
       <input
         :class="[$style.input]"
         placeholder="Payment date"
         type="date"
+        name="date"
         v-model="date"
       />
     </div>
 
     <div :class="[$style.formBottomButton]">
-      <button :class="[$style.addCategory]" @click="toggleAddCategoryButton">
+      <button :class="[$style.addCategory]" @click="toggleAddCategoryButton()">
         {{ !isAddCategory ? "Add category" : "Back" }}
       </button>
       <button
@@ -54,6 +56,7 @@
       <button
         :class="[$style.button]"
         @click="addCategory"
+        id='addCategory'
         v-show="isAddCategory"
       >
         Category <span :class="[$style.spanAdd]">+</span>
@@ -184,14 +187,16 @@ export default {
       this.toggleAddCategoryButton(false);
     },
     toggleSaveButton(value) {
-      if (!value) {
+      if (value !== undefined) {
+      // if (!value) {
         this.isSaveButton = value;
       } else {
         this.isSaveButton = !this.isSaveButton;
       }
     },
     toggleAddCategoryButton(value) {
-      if (!value) {
+      // if (!value) {
+      if (value !== undefined) {
         this.isAddCategory = value;
       } else {
         this.isAddCategory = !this.isAddCategory;

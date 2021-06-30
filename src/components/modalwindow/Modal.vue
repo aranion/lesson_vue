@@ -12,13 +12,8 @@ export default {
   props: {
     setIsPaymentForm: Function,
   },
-  data() {
-    return {};
-  },
-  methods: {},
-  mounted() {},
 };
 </script>
 
-<style lang='scss' module>
+<style>
 </style>

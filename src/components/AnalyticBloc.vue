@@ -59,7 +59,7 @@ export default {
     ]),
 
     getCategory() {
-      return Object.keys(this.getAnalyticData);
+      // return Object.keys(this.getAnalyticData);
     }
   },
   methods: {
