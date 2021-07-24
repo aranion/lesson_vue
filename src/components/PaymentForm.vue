@@ -36,31 +36,37 @@
     </div>
 
     <div :class="[$style.formBottomButton]">
-      <button :class="[$style.addCategory]" @click="toggleAddCategoryButton()">
+      <button :class="[$style.addCategory]" color="teal accent-4" @click="toggleAddCategoryButton()">
         {{ !isAddCategory ? "Add category" : "Back" }}
       </button>
-      <button
+      <v-btn
+        color="teal accent-4"
+        dark
         :class="[$style.button]"
         @click="add"
         v-show="!isAddCategory && !isSaveButton"
       >
         ADD <span :class="[$style.spanAdd]">+</span>
-      </button>
-      <button
+      </v-btn>
+      <v-btn
+        color="teal accent-4"
+        dark
         :class="[$style.button]"
         @click="updatePaymetnList"
         v-show="isSaveButton"
       >
         SAVE
-      </button>
-      <button
+      </v-btn>
+      <v-btn
+        color="teal accent-4"
+        dark
         :class="[$style.button]"
         @click="addCategory"
-        id='addCategory'
+        id="addCategory"
         v-show="isAddCategory"
       >
-        Category <span :class="[$style.spanAdd]">+</span>
-      </button>
+        Category <span>+</span>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -105,7 +111,7 @@ export default {
       new Promise((resolve) => {
         setTimeout(() => {
           resolve(this.fetchData(maxPage));
-        }, 100);
+        }, 0);
       }).then(() => {
         this.$root.$emit("toogleActivePage", maxPage);
         this.setPaymentListAdded({ date, category, price });
@@ -188,7 +194,7 @@ export default {
     },
     toggleSaveButton(value) {
       if (value !== undefined) {
-      // if (!value) {
+        // if (!value) {
         this.isSaveButton = value;
       } else {
         this.isSaveButton = !this.isSaveButton;
@@ -225,18 +231,7 @@ export default {
     this.date = this.getNowDateFormat();
     this.addDataFromUrl();
     this.fetchCategories();
-
     this.$root.$on("editPaymentForm", this.openEditPaymentListForm);
-
-    // this.$root.$on('isPayment', this.editPaymentList);
-    // this.price = +this.$route.params.price;
-    // this.$store.commit("setPaymentsListData", ["s", "s"]);
-    // console.log("paymentsList=", this.$store.state.paymentsList);
-    // this.setPaymentsListData(["r", "r"]);
-    // console.log("paymentsList==", this.$store.state.paymentsList);
-    // this.setPaymentsListData(this.fetchData()); // this.$store.commit("setPaymentsListData", this.fetchData());
-    // console.log(this.getPaymentsListFullPrice);
-    // console.log(this.$store.getters.getPaymentsListFullPrice);
   },
   updated() {},
 };
@@ -263,6 +258,7 @@ $buttonColor: rgb(19, 201, 153);
   border: 1px solid $buttonColor;
   box-sizing: border-box;
   @include shadow();
+  z-index: 1;
 }
 .input {
   width: 100%;

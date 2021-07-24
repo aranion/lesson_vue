@@ -1,27 +1,23 @@
 <template>
-  <div id="app">
-    <header :class="[$style.header]">
-      <nav :class="[$style.nav]">
-        <router-link
-          v-for="(link, index) in navLinks"
-          :key="index"
-          :to="link.url"
-          :class="[
-            $style.navLink,
-            {
-              [$style.navLinkActiv]: checkActivePage(link.name),
-            },
-          ]"
-        >
-          {{ link.name }}
-        </router-link>
-      </nav>
-      <h1 :class="$style.title">My personal costs</h1>
-    </header>
-    <main>
-      <router-view />
-    </main>
-  </div>
+  <v-app>
+    <v-app-bar flat app>
+        <v-tabs color="teal accent-4">
+          <v-tab
+            :ripple="false"
+            plain
+            v-for="(link, index) in navLinks"
+            :key="index"
+            :to="link.url"
+            
+          >
+            {{ link.name }}
+          </v-tab>
+        </v-tabs>
+    </v-app-bar>
+    <v-main app>
+      <router-view class="pa-5" />
+    </v-main>
+  </v-app>
 </template>
 <script>
 export default {

@@ -1,54 +1,25 @@
 <template>
   <div :class="$style.rightBloc">
-    <h2>Costs by categories</h2>
-    <div :class="$style.getCategories">
-      <div
-        :class="$style.catigoriesList"
-        v-for="(item, index) in getCategory"
-        :key="index"
-      >
-        <div
-          :class="[$style.barColor]"
-          :style="'background-color:' + colorCategories[index]"
-        ></div>
-        {{ item + " (" + calcPercentOfTotal(item) + "%)" }}
-      </div>
-
-      <div :class="[$style.bar]">
-        <div
-          v-for="(item, index) in getCategory"
-          :key="index"
-          :class="[$style.barValue]"
-          :style="
-            'background-color:' +
-            colorCategories[index] +
-            '; width:' +
-            calcPercentOfTotal(item) +
-            '%'
-          "
-        ></div>
-      </div>
-
-      <span>{{ "Total price = " + getPaymentsListFullPrice + " p." }}</span>
+    <h2 class="mb-7">Costs by categories</h2>
+    <div>
+      <canvas ref="canvas"></canvas>
     </div>
-   </div>
+    <h3 class="my-7">{{ "Total price = " + getPaymentsListFullPrice + " p." }}</h3>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { Pie } from "vue-chartjs";
 
 export default {
   props: {},
+  extends: Pie,
   data() {
     return {
-      colorCategories: [
-        "#703ddb",
-        "#936a01",
-        "#87c83a",
-        "#c05650",
-        "#10492f",
-        "#b92495",
-      ],
+      colorCategory: [],
+      nameArr: [],
+      priceArr: [],
     };
   },
   computed: {
@@ -57,50 +28,54 @@ export default {
       "getPaymentsListFullPrice",
       "getAnalyticData",
     ]),
-
-    getCategory() {
-      // return Object.keys(this.getAnalyticData);
-    }
   },
   methods: {
     ...mapActions(["fetchAnalytic"]),
 
-    calcPercentOfTotal(item) {
-      return Math.round((this.getAnalyticData[item] / this.getPaymentsListFullPrice) * 100);
-    },
-    addColorCategories() {
-      if (this.colorCategories.length < this.getCategories.length) {
-        for (
-          let i = 0;
-          i < this.getCategories.length - this.colorCategories.length;
-          i++
-        ) {
-          this.colorCategories.push(this.randomColor());
-        }
-      }
-    },
     random(max, min) {
       return Math.floor(Math.random() * (max - min + 1) + min);
     },
     randomColor() {
-      let color = "#";
-      const abc = { 10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f" };
+      let color = "rgba(";
 
-      for (let i = 0; i < 6; i++) {
-        const rnd = this.random(15, 0);
-
-        if (rnd >= 10) color = color + abc[rnd];
-        else color = color + rnd;
+      for (let i = 0; i < 3; i++) {
+        color = color + this.random(220, 30) + ",";
       }
+      color = color + "0." + this.random(6, 1) + ")";
 
       return color;
     },
+    renderPei() {
+      this.renderChart({
+        labels: this.nameArr,
+        datasets: [
+          {
+            label: "Costs by categories",
+            data: this.priceArr,
+            backgroundColor: this.colorCategory,
+            borderColor: this.colorCategory,
+            borderWidth: 1,
+          },
+        ],
+      });
+    },
   },
   mounted() {
-    this.fetchAnalytic();
+    this.randomColor();
+
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(this.fetchAnalytic());
+      }, 0);
+    }).then(() => {
+      this.nameArr = Object.keys(this.getAnalyticData);
+      this.priceArr = Object.values(this.getAnalyticData);
+      this.nameArr.forEach(() => this.colorCategory.push(this.randomColor()));
+
+      this.renderPei();
+    });
   },
   updated() {
-    this.addColorCategories();
   },
 };
 </script>

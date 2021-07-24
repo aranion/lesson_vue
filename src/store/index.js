@@ -138,7 +138,7 @@ export default new Vuex.Store({
             fullPrice: localStorageAll.getFullPrice(),
           };
           resolve(itemsResolve);
-        }, 1000);
+        }, 500);
       }).then((res) => {
         commit("setPaymentsListData", res.items);
         commit("setMaxPages", res.maxPages);
@@ -149,14 +149,14 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(localStorageAll.categories);
-        }, 1000);
+        }, 500);
       }).then((res) => {
         commit("setCategories", res);
       });
     },
     fetchAnalytic({ commit }) {
       return new Promise((resolve) => {
-        setTimeout(() => resolve(localStorageAll.getAnalyticData()), 500);
+        setTimeout(() => resolve(localStorageAll.getAnalyticData()), 100);
       }).then((res) => {
         commit("setAnalyticData", res);
       });

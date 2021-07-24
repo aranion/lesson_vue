@@ -1,61 +1,49 @@
 <template>
-  <div :class="[$style.wrapperContent]">
-    <section :class="[$style.section]">
-      <button @click="togglePaymentForm" :class="[$style.togglePaymentForm]">
-        ADD NEW COST+
-      </button>
-      <transition name='fade'>
-        <Modal v-show="isPaymentForm" :setIsPaymentForm='setIsPaymentForm'/>
+  <v-row>
+    <v-col>
+      <h2 class="mb-7">My personal costs</h2>
+      <v-btn :ripple="false" color="teal accent-4" dark :class="[$style.togglePaymentForm]" @click="togglePaymentForm" >
+        ADD NEW COST
+        <v-icon dark>mdi-plus</v-icon>
+      </v-btn>
+      <transition name="fade">
+        <Modal v-show="isPaymentForm" :setIsPaymentForm="setIsPaymentForm" />
       </transition>
-
-      <!-- <button @click="togglePaymentForm" :class="[$style.togglePaymentForm]">
-        ADD NEW COST+
-      </button>
-      <PaymentForm
-        v-show="isPaymentForm"
-        :setIsPaymentForm="setIsPaymentForm"
-      /> -->
       <PaymentsList />
       <PaginationPayments />
-    </section>
-    <section :class="[$style.section]">
+    </v-col>
+    <v-col>
       <AnalyticBloc />
-    </section>
-  </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import PaymentsList from "../components/PaymentsList";
-// import PaymentForm from "../components/PaymentForm";
 import PaginationPayments from "../components/PaginationPayments";
 import AnalyticBloc from "../components/AnalyticBloc";
-// import Modal from "../components/modalwindow/Modal";
 
 export default {
   data() {
     return {
       isPaymentForm: false,
-      // isShow: "",
     };
   },
   components: {
     PaymentsList,
-    // PaymentForm,
     PaginationPayments,
     AnalyticBloc,
     Modal: () => import("../components/modalwindow/Modal"),
   },
   methods: {
-    togglePaymentForm() { 
+    togglePaymentForm() {
       this.isPaymentForm = !this.isPaymentForm;
     },
     setIsPaymentForm(value) {
       this.isPaymentForm = value;
     },
   },
-  mounted() {
-    
-  },
+  mounted() {},
 };
 </script>
 
@@ -73,7 +61,7 @@ $buttonColor: rgb(19, 201, 153);
   background-color: $buttonColor;
   border: none;
   cursor: pointer;
-  min-width: 320px;
+  width: 320px;
   padding: 10px 60px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -86,12 +74,12 @@ $buttonColor: rgb(19, 201, 153);
 .togglePaymentForm:hover {
   background-color: darken($buttonColor, 5%);
 }
-:global(.fade-enter-active), :global(.fade-leave-active) {
+:global(.fade-enter-active),
+:global(.fade-leave-active) {
   transition: opacity 0.5s;
-
 }
-:global(.fade-enter), :global(.fade-leave-to) {
+:global(.fade-enter),
+:global(.fade-leave-to) {
   opacity: 0;
 }
-
 </style>

@@ -112,7 +112,7 @@ export default {
 
     &:hover {
       background-color: rgba(34, 60, 80, 0.1);
-      text-decoration: underline;
+      // text-decoration: underline;
     }
 
     .buttonImg {

@@ -9,9 +9,6 @@ export default {
       show(name) {
         this.EventBus.$emit("show", { name });
       },
-      // close() {
-      //   this.EventBus.$emit("close");
-      // },
     };
   },
 };

@@ -27,7 +27,6 @@
  
 <script>
 import { mapGetters } from "vuex";
-// import ContextMenu from "./ContextMenu/ContextMenu";
 
 export default {
   components: {
@@ -53,14 +52,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getPaymentsListActive"]),
+    ...mapGetters(["getPaymentsList", "getPaymentsListActive"]),
+
+    paymentList() {
+      return this.getPaymentsListActive;
+    },
 
     calcItemsPages() {
       return this.getPaymentsListActive;
-      // return this.getPaymentsList.slice(
-      //   this.getItemsOnPage * (this.getTargetPage - 1),
-      //   this.getItemsOnPage * (this.getTargetPage - 1) + this.getItemsOnPage
-      // );
     },
   },
   mounted() {},
@@ -80,6 +79,7 @@ export default {
   min-width: 100%;
   text-align: center;
   padding: 15px 0;
+  position: relative;
 }
 .titleRowSelect:hover {
   background-color: rgba(137, 255, 198, 0.3);

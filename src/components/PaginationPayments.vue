@@ -42,9 +42,6 @@ export default {
 
       this.setTargetPage(page);
       this.fetchData(page);
-      // this.$emit("getNumberTargetPage", {
-      //   targetPage: this.targetPage,
-      // });
       this.toggleStyleActivPage();
     },
     toggleStyleActivPage() {
